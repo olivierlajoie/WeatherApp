@@ -5,8 +5,6 @@ import retrofit.Call
 import retrofit.http.GET
 import retrofit.http.Query
 
-// TODO (STEP 4: Create a WeatherService interface)
-// START
 /**
  * An Interface which defines the HTTP operations Functions.
  */
@@ -20,4 +18,3 @@ interface WeatherService {
         @Query("appid") appid: String?
     ): Call<WeatherResponse>
 }
-// END

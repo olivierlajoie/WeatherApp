@@ -5,11 +5,12 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
 
-// TODO (STEP 2: Create the activities package and utils package and add the MainActivity class to it and create the constant object in utils.)\
-// START
 object Constants {
 
-    // TODO (STEP 3: Add a function to check the network connection is available or not.)
+    const val APP_ID: String = "ab08c6e5acbf2b2eb3e1e4060bbcdd29"
+    const val BASE_URL: String = "http://api.openweathermap.org/data/"
+    const val METRIC_UNIT: String = "metric"
+
     /**
      * This function is used check the weather the device is connected to the Internet or not.
      */
@@ -33,4 +34,3 @@ object Constants {
         }
     }
 }
-// END

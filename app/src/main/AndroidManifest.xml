@@ -3,7 +3,6 @@
     package="com.weatherapp">
 
 
-    <!-- TODO (STEP 5: For getting the location we have to define these permissions.)-->
     <!-- To access the location -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -16,7 +15,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <!--TODO (STEP 2: Modify the activity tag as per requirement)-->
         <activity
             android:name=".MainActivity"
             android:screenOrientation="portrait">

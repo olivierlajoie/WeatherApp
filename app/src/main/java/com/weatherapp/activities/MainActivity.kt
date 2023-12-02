@@ -6,6 +6,7 @@ import android.app.Dialog
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.location.Location
 import android.location.LocationManager
 import android.net.Uri
@@ -19,6 +20,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.location.*
+import com.google.gson.Gson
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -46,12 +48,15 @@ class MainActivity : AppCompatActivity() {
     // A global variable for Progress Dialog
     private var mProgressDialog: Dialog? = null
 
-    // TODO (STEP 5: Make the latitude and longitude variables global to use it in the menu item selection to refresh the data.)
-    // START
     // A global variable for Current Latitude
     private var mLatitude: Double = 0.0
     // A global variable for Current Longitude
     private var mLongitude: Double = 0.0
+
+    // TODO (STEP 1: Add a variable for SharedPreferences)
+    // START
+    // A global variable for the SharedPreferences
+    private lateinit var mSharedPreferences: SharedPreferences
     // END
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,6 +65,19 @@ class MainActivity : AppCompatActivity() {
 
         // Initialize the Fused location variable
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+
+        // TODO (STEP 2: Initialize the SharedPreferences variable.)
+        // START
+        // Initialize the SharedPreferences variable
+        mSharedPreferences = getSharedPreferences(Constants.PREFERENCE_NAME, Context.MODE_PRIVATE)
+        // END
+
+        // TODO (STEP 7: Call the UI method to populate the data in
+        //  the UI which are already stored in sharedPreferences earlier.
+        //  At first run it will be blank.)
+        // START
+        setupUI()
+        // END
 
         if (!isLocationEnabled()) {
             Toast.makeText(
@@ -103,8 +121,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // TODO (STEP 4: Now add the override methods to load the menu file and perform the selection on item click.)
-    // START
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_main, menu)
@@ -113,17 +129,13 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            // TODO (STEP 7: Now finally, make an api call on item selection.)
-            // START
             R.id.action_refresh -> {
                 getLocationWeatherDetails()
                 true
             }
             else -> super.onOptionsItemSelected(item)
-            // END
         }
     }
-    // END
 
     /**
      * A function which is used to verify that the location or GPS is enable or not of the user's device.
@@ -185,16 +197,10 @@ class MainActivity : AppCompatActivity() {
         override fun onLocationResult(locationResult: LocationResult) {
 
             val mLastLocation: Location = locationResult.lastLocation
-            // TODO (STEP 6: Assign the values to the global variables here
-            //  to use that for api calling. And remove the latitude and
-            //  longitude from the parameter as we can directly use it while
-            //  API calling.)
-            // START
             mLatitude = mLastLocation.latitude
             Log.e("Current Latitude", "$mLatitude")
             mLongitude = mLastLocation.longitude
             Log.e("Current Longitude", "$mLongitude")
-            // END
 
             getLocationWeatherDetails()
         }
@@ -256,7 +262,21 @@ class MainActivity : AppCompatActivity() {
                         val weatherList: WeatherResponse = response.body()
                         Log.i("Response Result", "$weatherList")
 
-                        setupUI(weatherList)
+                        // TODO (STEP 4: Here we convert the response object to string and store the string in the SharedPreference.)
+                        // START
+                        // Here we have converted the model class in to Json String to store it in the SharedPreferences.
+                        val weatherResponseJsonString = Gson().toJson(weatherList)
+                        // Save the converted string to shared preferences
+                        val editor = mSharedPreferences.edit()
+                        editor.putString(Constants.WEATHER_RESPONSE_DATA, weatherResponseJsonString)
+                        editor.apply()
+                        // END
+
+                        // TODO (STEP 5: Remove the weather detail object as we will be getting
+                        //  the object in form of a string in the setup UI method.)
+                        // START
+                        setupUI()
+                        // END
                     } else {
                         // If the response is not success then we check the response code.
                         val sc = response.code()
@@ -314,7 +334,19 @@ class MainActivity : AppCompatActivity() {
     /**
      * Function is used to set the result in the UI elements.
      */
-    private fun setupUI(weatherList: WeatherResponse) {
+    private fun setupUI() {
+        // TODO (STEP 6: Here we get the stored response from
+        //  SharedPreferences and again convert back to data object
+        //  to populate the data in the UI.)
+        // START
+        // Here we have got the latest stored response from the SharedPreference and converted back to the data model object.
+        val weatherResponseJsonString =
+            mSharedPreferences.getString(Constants.WEATHER_RESPONSE_DATA, "")
+
+        if (!weatherResponseJsonString.isNullOrEmpty()) {
+
+            val weatherList =
+                Gson().fromJson(weatherResponseJsonString, WeatherResponse::class.java)
 
             // For loop to get the required data. And all are populated in the UI.
             for (z in weatherList.weather.indices) {
@@ -350,7 +382,9 @@ class MainActivity : AppCompatActivity() {
                     "11n" -> iv_main.setImageResource(R.drawable.rain)
                     "13n" -> iv_main.setImageResource(R.drawable.snowflake)
                 }
+            }
         }
+        // END
     }
 
     /**

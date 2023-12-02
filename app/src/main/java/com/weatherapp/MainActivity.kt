@@ -29,21 +29,13 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
  */
 class MainActivity : AppCompatActivity() {
 
-    // TODO (STEP 3: Add a variable for FusedLocationProviderClient.)
-    // START
-    // A fused location client variable which is further used to get the user's current location
     private lateinit var mFusedLocationClient: FusedLocationProviderClient
-    // END
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // TODO (STEP 4: Initialize the fusedLocationProviderClient variable.)
-        // START
-        // Initialize the Fused location variable
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        // END
 
         if (!isLocationEnabled()) {
             Toast.makeText(
@@ -56,8 +48,6 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
             startActivity(intent)
         } else {
-            // TODO (STEP 1: Asking the location permission on runtime.)
-            // START
             Dexter.withActivity(this)
                     .withPermissions(
                             Manifest.permission.ACCESS_FINE_LOCATION,
@@ -66,10 +56,7 @@ class MainActivity : AppCompatActivity() {
                     .withListener(object : MultiplePermissionsListener {
                         override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                             if (report!!.areAllPermissionsGranted()) {
-                                // TODO (STEP 7: Call the location request function here.)
-                                // START
                                 requestLocationData()
-                                // END
                             }
 
                             if (report.isAnyPermissionPermanentlyDenied) {
@@ -89,7 +76,6 @@ class MainActivity : AppCompatActivity() {
                         }
                     }).onSameThread()
                     .check()
-            // END
         }
     }
 
@@ -106,11 +92,7 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
-    // TODO (STEP 2: A alert dialog for denied permissions and if needed to allow it from the settings app info.)
-    // START
-    /**
-     * A function used to show the alert dialog when the permissions are denied and need to allow it from settings app info.
-     */
+
     private fun showRationalDialogForPermissions() {
         AlertDialog.Builder(this)
                 .setMessage("It Looks like you have turned off permissions required for this feature. It can be enabled under Application Settings")
@@ -131,13 +113,7 @@ class MainActivity : AppCompatActivity() {
                     dialog.dismiss()
                 }.show()
     }
-    // END
 
-    // TODO (STEP 5: Add a function to get the location of the device using the fusedLocationProviderClient.)
-    // START
-    /**
-     * A function to request the current location. Using the fused location provider client.
-     */
     @SuppressLint("MissingPermission")
     private fun requestLocationData() {
 
@@ -149,13 +125,7 @@ class MainActivity : AppCompatActivity() {
                 Looper.myLooper()
         )
     }
-    // END
 
-    // TODO (STEP 6: Register a request location callback to get the location.)
-    // START
-    /**
-     * A location callback object of fused location provider client where we will get the current location details.
-     */
     private val mLocationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
             val mLastLocation: Location = locationResult.lastLocation
@@ -166,5 +136,4 @@ class MainActivity : AppCompatActivity() {
             Log.i("Current Longitude", "$longitude")
         }
     }
-    // END
 }

@@ -10,16 +10,9 @@ object Constants {
     const val APP_ID: String = "2c50325f427689340a03ff16215d8fc4"
     const val BASE_URL: String = "http://api.openweathermap.org/data/"
     const val METRIC_UNIT: String = "metric"
-
-    // TODO (STEP 3: Add the SharedPreferences name and key name for storing the response data in it.)
-    // START
     const val PREFERENCE_NAME = "WeatherAppPreference"
     const val WEATHER_RESPONSE_DATA = "weather_response_data"
-    // END
 
-    /**
-     * This function is used check the weather the device is connected to the Internet or not.
-     */
     fun isNetworkAvailable(context: Context): Boolean {
         // It answers the queries about the state of network connectivity.
         val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
